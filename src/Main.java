@@ -3,6 +3,5 @@ public class Main {
         System.out.println("Hello world");
         System.out.println("Hello again");
         System.out.println("Here í it");
-        System.out.println("tminh đỉnh vcl");
     }
 }
