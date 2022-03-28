@@ -12,6 +12,8 @@ public class GamePanel extends JPanel implements Runnable {
     static int BALL_DIAMETER = 20; //duong kinh bóng
     static int PADDLE_WIDTH = 25;  // chiều rộng của thanh trượt
     static int PADDLE_HEIGHT = 100; // chiều cao thanh trượt
+    static int winScore = 2;
+    boolean ballRunning;
 
     Thread gameThread;
     Image image;
@@ -22,7 +24,6 @@ public class GamePanel extends JPanel implements Runnable {
     Paddle player2;
     Ball ball;
     Menu menu;
-    GameOver gameOver;
 
     GamePanel() {
         newPaddles();
@@ -41,8 +42,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void newBall() {
-        random = new Random();
-        ball = new Ball(GAME_WIDTH / 2 - BALL_DIAMETER / 2, random.nextInt(GAME_HEIGHT / 2 - BALL_DIAMETER / 2), BALL_DIAMETER, BALL_DIAMETER);
+        ball = new Ball(GAME_WIDTH / 2 - BALL_DIAMETER / 2, GAME_HEIGHT / 2 - BALL_DIAMETER, BALL_DIAMETER, BALL_DIAMETER);
+        ballRunning = true;
     }
 
     public void newPaddles() {
@@ -53,7 +54,6 @@ public class GamePanel extends JPanel implements Runnable {
     public void newMenu() {
         menu = new Menu();
     }
-    public void newGameOver(){gameOver = new GameOver();}
 
     public void paint(Graphics g) {
         image = createImage(getWidth(), getHeight());
@@ -70,18 +70,39 @@ public class GamePanel extends JPanel implements Runnable {
             ball.draw(g);
             score.draw(g);
         }
-//        gameOver.draw(g);
-////
-//        if(score.player1 == 5){
-//            gameOver.draw(g);
-     //   }
+    }
+
+    public void showOver(){
+        if (score.player1 == winScore) {
+            System.out.println("vao score");
+            int reply = JOptionPane.showOptionDialog(null, "Player 1 wins \n New Game ?", "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (reply == JOptionPane.YES_OPTION) {
+                score.player1 = 0;
+                score.player2 = 0;
+                newBall();
+                gameThread.run();
+            } else System.exit(0);
+        }
+
+        if (score.player2 == winScore) {
+            ballRunning = false;
+            ball.xVelocity = 0;
+            ball.yVelocity = 0;
+            int reply = JOptionPane.showOptionDialog(null, "Player 2 wins \n New Game ?", "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (reply == JOptionPane.YES_OPTION) {
+                score.player1 = 0;
+                score.player2 = 0;
+                newBall();
+                gameThread.run();
+            } else System.exit(0);
+        }
     }
 
     public void move() {
         if (!menu.active) {
+            if(ballRunning) ball.move();
             player1.move();
             player2.move();
-            ball.move();
         }
     }
 
@@ -117,13 +138,13 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         //player1 được điểm -> reset bàn chơi
-        if (ball.x >= GAME_WIDTH - BALL_DIAMETER) {
+        if (ball.x >= GAME_WIDTH + BALL_DIAMETER) {
             score.player1++;
             newBall();
         }
 
         // player2 được điểm -> reset bàn chơi
-        if (ball.x <= 0) {
+        if (ball.x <= -BALL_DIAMETER) {
             score.player2++;
             newBall();
         }
@@ -140,7 +161,9 @@ public class GamePanel extends JPanel implements Runnable {
             delta += (currentTime - lastTime) / drawInterval;
             lastTime = currentTime;
             if (delta >= 1) { // 1 = drawInterval
-                move();
+                if(score.player1 < winScore && score.player2 < winScore) {
+                    move();
+                }else showOver();
                 checkCollision();
                 repaint();
                 delta--;

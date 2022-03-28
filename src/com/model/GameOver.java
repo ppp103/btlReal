@@ -7,20 +7,21 @@ public class GameOver {
     Score score;
     Rectangle resetBtn;
     String resetBtnText = "Reset";
-    boolean resetBtnHovered = false;
+    boolean resetBtnHovered;
     Font font;
-    GameOver(){
+
+    GameOver() {
         active = false;
         int width, height, btnX, btnY;
         width = 300;
         height = 50;
         btnX = GamePanel.GAME_WIDTH / 2 - width / 2;
         btnY = GamePanel.GAME_HEIGHT / 2 - height / 2;
-        resetBtn = new Rectangle(btnX, btnY, width,height);
+        resetBtn = new Rectangle(btnX, btnY, width, height);
     }
-    public void draw(Graphics g){
-        if(score.player1 == 1){
-            active = true;
+
+    public void draw(Graphics g) {
+        if(active){
             //reset btn
             g.setColor(Color.GREEN);
             if (resetBtnHovered) g.setColor(Color.PINK);

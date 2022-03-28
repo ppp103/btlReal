@@ -8,6 +8,7 @@ public class Ball extends Rectangle {
     int xVelocity; //vận tốc bóng theo trục x
     int yVelocity; // vận tốc bóng theo trục y
     int initialSpeed = 5; // tốc độ ban đầu
+
     Ball(int x, int y, int width, int height) {
         super(x, y, width, height); // gọi hàm tạo rectangle
         random = new Random();

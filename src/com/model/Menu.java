@@ -83,12 +83,10 @@ public class Menu extends MouseAdapter {
 
         if (playBtn.contains(p)) {
             playBtnHovered = true;
-//            System.out.println("play moved");
         } else playBtnHovered = false;
 
         if (quitBtn.contains(p)) {
             quitBtnHovered = true;
-//            System.out.println("quit moved");
         } else quitBtnHovered = false;
     }
 }
